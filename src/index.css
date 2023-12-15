@@ -6,7 +6,13 @@
 
 @layer components {
   .container-main {
-    @apply bg-mainWhite rounded-custom shadow-custom py-5 px-4;
+    @apply bg-mainWhite border border-accent rounded-custom shadow-custom py-5 px-4;
+  }
+  .button-main {
+    @apply block w-full py-2 rounded-custom border border-accent duration-300 hover:bg-accentLight;
+  }
+  .input-main {
+    @apply block w-full py-2 rounded-custom border border-mainGray mb-4 px-4;
   }
 }
 

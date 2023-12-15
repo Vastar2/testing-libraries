@@ -1,95 +1,122 @@
-import {
-  useState,
-  // useEffect
-} from "react";
-import toast from "react-hot-toast";
-import useGetPokeData from "../hooks/useGetPokeData";
+import { useEffect, useState } from "react";
+import { useGetAllPokesData, useGetPokeData } from "../hooks/useGetPokeData";
+import { Helmet } from "react-helmet-async";
 
 const PokemonPage = () => {
-  const [currentPoke, setCurrentPoke] = useState<{
-    id: number;
-    name: string;
-    abilities: string[];
-  } | null>(null);
-  const [currentStatus, setCurrentStatus] = useState("");
-  const [input, setInput] = useState("");
+  const [queryRequest, setQueryRequest] = useState("");
+  const [queryRequestOnClick, setQueryRequestOnClick] = useState("");
 
-  const error = () => toast.error("Wrong name");
+  const {
+    data: allPokes,
+    isLoading: isLoadingAll,
+    refetch: refetchAllPokes,
+  } = useGetAllPokesData();
 
-  const { data, status, getData } = useGetPokeData(input);
+  useEffect(() => {
+    refetchAllPokes();
+  }, [refetchAllPokes]);
 
-  console.log(2, currentPoke, currentStatus);
+  const {
+    data: currentPoke,
+    isLoading,
+    refetch,
+  } = useGetPokeData(queryRequest || queryRequestOnClick);
 
-  //   const getPokeData = async () => {
-  //     try {
-  //       const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}`);
-  //       const result = await data.json();
-  //       console.log(result);
-  //       setCurrentPoke({
-  //         id: result.id,
-  //         name: result.name,
-  //         abilities: result.abilities.map((value) => value.ability.name),
-  //       });
-  //     } catch (e) {
-  //       setCurrentPoke(null);
-  //       error();
-  //     }
-  //   };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    refetch();
+  };
 
   return (
-    <div className="flex flex-col items-center pt-12">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (input === "") {
-            error();
-            setCurrentPoke(null);
-            return;
-          }
-          getData(input);
-        }}
-        className="w-[200px] mb-8"
-      >
-        <label>
+    <>
+      <Helmet>
+        <title>Poke</title>
+      </Helmet>
+      <div className="flex gap-8 justify-center pt-12">
+        <div>
           <p className="mb-4 text-center">
-            <b>Pockemon name</b> <br />
-            <i>(u can try "ditto")</i>
+            <b>Pokemons list</b> <br />
+            <i>(Try to click)</i>
           </p>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="block w-full py-2 rounded-custom border border-mainGray mb-2 px-4"
-          />
-        </label>
-        <button
-          type="submit"
-          className="block w-full py-2 rounded-custom border border-accent duration-300 hover:bg-accentLight"
-        >
-          Find
-        </button>
-      </form>
-      {currentPoke ? (
-        <div className="block w-[200px] p-2 rounded-custom border border-mainGray">
-          <p className="mb-1">
-            <span className="underline">Id:</span> {currentPoke?.id}
-          </p>
-          <p className="mb-1">
-            <span className="underline">Name:</span> {currentPoke?.name}
-          </p>
-          <p className="w-[200px] flex flex-wrap gap-1">
-            <span className="underline">Abilities:</span>{" "}
-            {currentPoke.abilities?.map((value, index) =>
-              index === currentPoke.abilities.length - 1
-                ? `${value}.`
-                : `${value}, `
-            )}
-          </p>
+          {allPokes ? (
+            <ul className="flex gap-2 flex-wrap w-[408px] mt-4 justify-center">
+              {allPokes.data.results.map(
+                (item: { name: string }, index: number) => (
+                  <li
+                    key={index}
+                    className="block w-[200px] rounded-custom border border-mainGray"
+                  >
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setQueryRequest("");
+                        await setQueryRequestOnClick(item.name);
+                        await refetch();
+                      }}
+                      className="w-full h-full p-2 duration-300 hover:bg-accentLight"
+                    >
+                      <p>
+                        <span className="underline">Name:</span> {item.name}
+                      </p>
+                    </button>
+                  </li>
+                )
+              )}
+            </ul>
+          ) : null}
         </div>
-      ) : (
-        <p>Find your first pokemon by name</p>
-      )}
-    </div>
+        <div>
+          <form onSubmit={handleSubmit} className="w-[200px] mb-7">
+            <label>
+              <p className="mb-4 text-center">
+                <b>Pockemon name</b> <br />
+                <i>(u can try "ditto")</i>
+              </p>
+              <input
+                type="text"
+                value={queryRequest}
+                onChange={(e) => {
+                  setQueryRequestOnClick("");
+                  setQueryRequest(e.target.value);
+                }}
+                className="input-main mb-2"
+              />
+            </label>
+            <button type="submit" className="button-main">
+              Find
+            </button>
+          </form>
+          {currentPoke ? (
+            <>
+              <p className="mb-2 text-center">
+                <b>Result data</b>
+              </p>
+              <div className="block w-[200px] p-2 rounded-custom border border-mainGray">
+                <p className="mb-1">
+                  <span className="underline">Id:</span> {currentPoke.data.id}
+                </p>
+                <p className="mb-1">
+                  <span className="underline">Name:</span>{" "}
+                  {currentPoke.data.name}
+                </p>
+                <p className="w-[200px] flex flex-wrap gap-1">
+                  <span className="underline">Abilities:</span>{" "}
+                  {currentPoke.data.abilities?.map(
+                    (value: { ability: { name: string } }, index: number) =>
+                      index === currentPoke.data.abilities.length - 1
+                        ? `${value.ability.name}.`
+                        : `${value.ability.name}, `
+                  )}
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="text-center">None</p>
+          )}
+        </div>
+        {(isLoading || isLoadingAll) && <p>Loading...</p>}
+      </div>
+    </>
   );
 };
 

@@ -3,16 +3,23 @@ import SharedLayout from "./components/SharedLayout";
 import PokemonPage from "./components/PokemonPage";
 import FormPage from "./components/FormPage";
 import { Toaster } from "react-hot-toast";
+import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 
 const App = () => {
   return (
-    <>
+    <HelmetProvider>
       <Routes>
         <Route path="/" element={<SharedLayout />}>
           <Route
             index
             element={
-              <p className="text-center">Hello, Pavel! This is HOME page</p>
+              <>
+                <Helmet>
+                  <title>Home</title>
+                </Helmet>
+                <p className="text-center">Hello, Pavel! This is HOME page</p>
+              </>
             }
           />
           <Route path="/poke" element={<PokemonPage />} />
@@ -20,7 +27,7 @@ const App = () => {
         </Route>
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />
-    </>
+    </HelmetProvider>
   );
 };
 

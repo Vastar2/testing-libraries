@@ -1,31 +1,30 @@
 import { useQuery } from "react-query";
-import axios from "axios";
-import { getDefaultState } from "react-query/types/core/mutation";
-// import { useState } from "react";
+import axiosClient from "../api/axios";
+import toast from "react-hot-toast";
 
-const useGetPokeData = () => {
-  // const [isLoading, setIsLoading] = useState(false);
+export const useGetAllPokesData = () => {
+  const error = () => toast.error("No pokemons");
 
-  const getData = (input) => {};
-
-  const { data, status } = useQuery("data", async () => {
-    const { data } = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${input}`
-    );
-
-    const result = await data.json();
-
-    const currentPoke = {
-      id: result.id,
-      name: result.name,
-      abilities: result.abilities.map((value) => value.ability.name),
-    };
-    return currentPoke;
+  const data = useQuery("GET_ALL_POKEMONS", () => axiosClient.get(`pokemon/`), {
+    enabled: false,
+    onError: () => {
+      error();
+    },
   });
-
-  console.log(1, data, status);
-
-  return { data, status, getData };
+  return data;
 };
 
-export default useGetPokeData;
+export const useGetPokeData = (queryRequest: string) => {
+  const error = () => toast.error("Wrong name");
+  const data = useQuery(
+    "GET_POKEMON",
+    () => axiosClient.get(`pokemon/${queryRequest}`),
+    {
+      enabled: false,
+      onError: () => {
+        error();
+      },
+    }
+  );
+  return data;
+};
