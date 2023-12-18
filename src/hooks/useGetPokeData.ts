@@ -7,9 +7,7 @@ export const useGetAllPokesData = () => {
 
   const data = useQuery("GET_ALL_POKEMONS", () => axiosClient.get(`pokemon/`), {
     enabled: false,
-    onError: () => {
-      error();
-    },
+    onError: () => error(),
   });
   return data;
 };
@@ -21,9 +19,7 @@ export const useGetPokeData = (queryRequest: string) => {
     () => axiosClient.get(`pokemon/${queryRequest}`),
     {
       enabled: false,
-      onError: () => {
-        error();
-      },
+      onError: () => error(),
     }
   );
   return data;

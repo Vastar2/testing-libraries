@@ -1,16 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { HelmetProvider } from "react-helmet-async";
-import { Helmet } from "react-helmet-async";
 import { lazy, Suspense } from "react";
 import SharedLayout from "./components/SharedLayout";
 import Loader from "./components/Loader";
+import Home from "./pages/Home";
 import { MantineProvider } from "@mantine/core";
 
-const PokemonPage = lazy(() => import("./components/PokemonPage"));
-const FormPage = lazy(() => import("./components/FormPage"));
-const MarkdownPage = lazy(() => import("./components/MarkdownPage"));
-const TablePage = lazy(() => import("./components/TablePage"));
+const PokemonPage = lazy(() => import("./pages/PokemonPage"));
+const FormPage = lazy(() => import("./pages/FormPage"));
+const MarkdownPage = lazy(() => import("./pages/MarkdownPage"));
+const TablePage = lazy(() => import("./pages/TablePage"));
 
 const App = () => {
   return (
@@ -19,19 +19,7 @@ const App = () => {
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<SharedLayout />}>
-              <Route
-                index
-                element={
-                  <>
-                    <Helmet>
-                      <title>Home</title>
-                    </Helmet>
-                    <p className="text-center">
-                      Hello, Pavel! This is HOME page
-                    </p>
-                  </>
-                }
-              />
+              <Route index element={<Home />} />
               <Route path="/poke" element={<PokemonPage />} />
               <Route path="/form" element={<FormPage />} />
               <Route path="/markdown" element={<MarkdownPage />} />
