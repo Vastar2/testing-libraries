@@ -1,10 +1,10 @@
 import { NavLink, Outlet } from "react-router-dom";
 
 const SharedLayout = () => {
-  const navigationOptions = ["home", "poke", "form"];
+  const navigationOptions = ["home", "poke", "form", "markdown", "table"];
 
   return (
-    <div className="">
+    <div>
       <header className="bg-mainGrayLight flex justify-centerbasis-[1200px] px-6">
         <nav className="flex items-center h-16">
           <ul className="flex gap-2 h-10">

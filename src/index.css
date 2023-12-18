@@ -34,3 +34,12 @@ body {
   background-color: var(--main-white);
   color: var(--main-gray);
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--accent-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+}
