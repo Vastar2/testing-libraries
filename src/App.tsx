@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { HelmetProvider } from "react-helmet-async";
 import { lazy, Suspense } from "react";
 import SharedLayout from "./components/SharedLayout";
-import Loader from "./components/Loader";
+import { Loader } from "@mantine/core";
 import Home from "./pages/Home";
 import { MantineProvider } from "@mantine/core";
 
@@ -16,7 +16,7 @@ const App = () => {
   return (
     <HelmetProvider>
       <MantineProvider>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<Loader color="violet" />}>
           <Routes>
             <Route path="/" element={<SharedLayout />}>
               <Route index element={<Home />} />
